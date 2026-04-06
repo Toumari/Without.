@@ -63,16 +63,16 @@ export default function App() {
                 if (enabled) {
                   disable()
                 } else if (status === 'denied') {
-                  setBellMessage('Go to Settings > without. > Notifications to enable')
-                  setTimeout(() => setBellMessage(null), 4000)
+                  setBellMessage('To reset: delete the app, clear site data in Settings > Safari > Advanced > Website Data, then re-add to Home Screen')
+                  setTimeout(() => setBellMessage(null), 6000)
                 } else if (status === 'needs-install') {
                   setBellMessage('Add to Home Screen first to enable notifications')
                   setTimeout(() => setBellMessage(null), 3500)
                 } else {
                   const result = await enable()
                   if (result === 'denied') {
-                    setBellMessage('Go to Settings > without. > Notifications to enable')
-                    setTimeout(() => setBellMessage(null), 4000)
+                    setBellMessage('To reset: delete the app, clear site data in Settings > Safari > Advanced > Website Data, then re-add to Home Screen')
+                    setTimeout(() => setBellMessage(null), 6000)
                   }
                 }
               }}
