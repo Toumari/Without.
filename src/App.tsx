@@ -11,7 +11,7 @@ import type { Habit } from './types'
 
 export default function App() {
   const { habits, addHabit, editHabit, resetHabit, deleteHabit } = useHabits()
-  const { status, enabled, enable, disable, debug } = useNotifications()
+  const { status, enabled, enable, disable } = useNotifications()
   const [bellMessage, setBellMessage] = useState<string | null>(null)
   const [showAdd, setShowAdd] = useState(false)
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined)
@@ -56,23 +56,23 @@ export default function App() {
             gentle tracking for gentle minds
           </p>
         </div>
-        <p style={{ fontSize: 9, color: 'red', maxWidth: 160, textAlign: 'right', lineHeight: 1.4 }}>
-          {JSON.stringify(debug)}
-        </p>
         {status !== 'unsupported' && (
           <div className="flex flex-col items-end gap-1">
             <button
               onClick={async () => {
                 if (enabled) {
                   disable()
+                } else if (status === 'denied') {
+                  setBellMessage('Go to Settings > without. > Notifications to enable')
+                  setTimeout(() => setBellMessage(null), 4000)
+                } else if (status === 'needs-install') {
+                  setBellMessage('Add to Home Screen first to enable notifications')
+                  setTimeout(() => setBellMessage(null), 3500)
                 } else {
                   const result = await enable()
-                  if (result === 'needs-install') {
-                    setBellMessage('Add to Home Screen first to enable notifications')
-                    setTimeout(() => setBellMessage(null), 3500)
-                  } else if (result === 'denied') {
-                    setBellMessage('Enable notifications in your browser settings')
-                    setTimeout(() => setBellMessage(null), 3500)
+                  if (result === 'denied') {
+                    setBellMessage('Go to Settings > without. > Notifications to enable')
+                    setTimeout(() => setBellMessage(null), 4000)
                   }
                 }
               }}

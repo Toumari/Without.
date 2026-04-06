@@ -81,6 +81,7 @@ export function useNotifications() {
   const enable = async (): Promise<NotificationStatus> => {
     if (needsInstall) return 'needs-install'
     if (!notificationSupported) return 'unsupported'
+    if (Notification.permission === 'denied') return 'denied'
 
     const result = await Notification.requestPermission()
     setPermission(result)
@@ -103,13 +104,5 @@ export function useNotifications() {
     setEnabled(false)
   }
 
-  const debug = {
-    isIOS,
-    isStandalone,
-    notificationSupported,
-    needsInstall,
-    permission,
-  }
-
-  return { status, enabled, enable, disable, debug }
+  return { status, enabled, enable, disable }
 }
