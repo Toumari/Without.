@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FAF7F2;
+  --color-sage: #8BAF96;
+  --color-sage-dark: #6D9478;
+  --color-sage-light: #B8D4C0;
+  --color-rose-muted: #C49A8A;
+  --color-gold-muted: #D4AF7A;
+  --color-warm-gray: #C0B5A8;
+  --color-warm-dark: #2A2623;
+  --color-warm-mid: #6B6460;
+  --color-card: #FFFFFF;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: var(--color-warm-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes milestone-glow {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(212, 175, 122, 0.2), 0 4px 32px rgba(212, 175, 122, 0.2);
+  }
+}
+
+@keyframes card-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.milestone-glow {
+  border: 1px solid rgba(212, 175, 122, 0.45) !important;
+  animation: milestone-glow 2.5s ease-in-out 0.4s 2;
+}
+
+.card-shake {
+  animation: card-shake 0.4s ease-in-out;
+}
+
+.safe-bottom {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
