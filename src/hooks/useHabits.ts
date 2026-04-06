@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { arrayMove } from '@dnd-kit/sortable'
 import { loadHabits, saveHabits } from '../utils/storage'
 import { todayISO } from '../utils/milestones'
 import type { Habit } from '../types'
@@ -52,5 +53,14 @@ export function useHabits() {
     [habits, persist],
   )
 
-  return { habits, addHabit, editHabit, resetHabit, deleteHabit }
+  const reorderHabits = useCallback(
+    (activeId: string, overId: string) => {
+      const oldIndex = habits.findIndex(h => h.id === activeId)
+      const newIndex = habits.findIndex(h => h.id === overId)
+      if (oldIndex !== -1 && newIndex !== -1) persist(arrayMove(habits, oldIndex, newIndex))
+    },
+    [habits, persist],
+  )
+
+  return { habits, addHabit, editHabit, resetHabit, deleteHabit, reorderHabits }
 }

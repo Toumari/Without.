@@ -18,6 +18,34 @@
   --font-body: 'Nunito', system-ui, sans-serif;
 }
 
+/* Dark mode — system default */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-cream: #1C1917;
+    --color-card: #252220;
+    --color-warm-dark: #EDE8E0;
+    --color-warm-mid: #9B9085;
+    --color-warm-gray: #5C5854;
+  }
+}
+
+/* Manual overrides */
+html.dark {
+  --color-cream: #1C1917;
+  --color-card: #252220;
+  --color-warm-dark: #EDE8E0;
+  --color-warm-mid: #9B9085;
+  --color-warm-gray: #5C5854;
+}
+
+html.light {
+  --color-cream: #FAF7F2;
+  --color-card: #FFFFFF;
+  --color-warm-dark: #2A2623;
+  --color-warm-mid: #6B6460;
+  --color-warm-gray: #C0B5A8;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
