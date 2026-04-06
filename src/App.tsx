@@ -11,7 +11,8 @@ import type { Habit } from './types'
 
 export default function App() {
   const { habits, addHabit, editHabit, resetHabit, deleteHabit } = useHabits()
-  const { permission, enabled, supported, enable, disable } = useNotifications()
+  const { status, enabled, enable, disable } = useNotifications()
+  const [bellMessage, setBellMessage] = useState<string | null>(null)
   const [showAdd, setShowAdd] = useState(false)
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined)
   const [slippingId, setSlippingId] = useState<string | null>(null)
@@ -55,15 +56,35 @@ export default function App() {
             gentle tracking for gentle minds
           </p>
         </div>
-        {supported && permission !== 'denied' && (
-          <button
-            onClick={enabled ? disable : enable}
-            className="mt-1 w-10 h-10 flex items-center justify-center rounded-full transition-opacity hover:opacity-60"
-            title={enabled ? 'Disable daily reminder' : 'Enable daily reminder'}
-            style={{ color: enabled ? 'var(--color-sage)' : 'var(--color-warm-gray)' }}
-          >
-            {enabled ? '🔔' : '🔕'}
-          </button>
+        {status !== 'unsupported' && (
+          <div className="flex flex-col items-end gap-1">
+            <button
+              onClick={async () => {
+                if (enabled) {
+                  disable()
+                } else {
+                  const result = await enable()
+                  if (result === 'needs-install') {
+                    setBellMessage('Add to Home Screen first to enable notifications')
+                    setTimeout(() => setBellMessage(null), 3500)
+                  } else if (result === 'denied') {
+                    setBellMessage('Enable notifications in your browser settings')
+                    setTimeout(() => setBellMessage(null), 3500)
+                  }
+                }
+              }}
+              className="mt-1 w-10 h-10 flex items-center justify-center rounded-full transition-opacity hover:opacity-60"
+              title={enabled ? 'Disable daily reminder' : 'Enable daily reminder'}
+              style={{ color: enabled ? 'var(--color-sage)' : 'var(--color-warm-gray)' }}
+            >
+              {enabled ? '🔔' : '🔕'}
+            </button>
+            {bellMessage && (
+              <p className="text-xs text-right max-w-40 leading-tight" style={{ color: 'var(--color-warm-mid)' }}>
+                {bellMessage}
+              </p>
+            )}
+          </div>
         )}
       </header>
 

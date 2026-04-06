@@ -28,56 +28,72 @@ async function registerPeriodicSync() {
     const reg = await navigator.serviceWorker.ready
     if ('periodicSync' in reg) {
       await (reg as any).periodicSync.register('daily-reminder', {
-        minInterval: 20 * 60 * 60 * 1000, // 20 hours
+        minInterval: 20 * 60 * 60 * 1000,
       })
     }
   } catch {
-    // periodicSync not supported or permission denied — on-open fallback handles it
+    // periodicSync not supported — on-open fallback handles it
   }
 }
 
 function maybeNotifyOnOpen() {
+  if (typeof Notification === 'undefined') return
   if (Notification.permission !== 'granted') return
   if (localStorage.getItem(ENABLED_KEY) !== 'true') return
-  const lastNotified = localStorage.getItem(NOTIFIED_KEY)
-  if (lastNotified === todayStr()) return
+  if (localStorage.getItem(NOTIFIED_KEY) === todayStr()) return
 
   const { title, body } = buildMessage()
   new Notification(title, { body, icon: '/icon-192.svg', badge: '/icon-192.svg' })
   localStorage.setItem(NOTIFIED_KEY, todayStr())
 }
 
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+const notificationSupported = typeof Notification !== 'undefined'
+
+export type NotificationStatus = 'unsupported' | 'needs-install' | 'default' | 'granted' | 'denied'
+
 export function useNotifications() {
   const [permission, setPermission] = useState<NotificationPermission>(
-    typeof Notification !== 'undefined' ? Notification.permission : 'denied'
+    notificationSupported ? Notification.permission : 'default'
   )
-  const [enabled, setEnabled] = useState(
-    localStorage.getItem(ENABLED_KEY) === 'true'
-  )
+  const [enabled, setEnabled] = useState(localStorage.getItem(ENABLED_KEY) === 'true')
 
-  const supported = typeof Notification !== 'undefined'
+  // iOS in Safari browser — needs to be installed first
+  const needsInstall = isIOS && !isStandalone
 
-  // On open: fire today's reminder if due
+  const status: NotificationStatus = needsInstall
+    ? 'needs-install'
+    : !notificationSupported
+    ? 'unsupported'
+    : permission === 'denied'
+    ? 'denied'
+    : permission === 'granted' && enabled
+    ? 'granted'
+    : 'default'
+
   useEffect(() => {
-    if (supported) maybeNotifyOnOpen()
-  }, [supported])
+    maybeNotifyOnOpen()
+  }, [])
 
-  const enable = async () => {
+  const enable = async (): Promise<NotificationStatus> => {
+    if (needsInstall) return 'needs-install'
+    if (!notificationSupported) return 'unsupported'
+
     const result = await Notification.requestPermission()
     setPermission(result)
     if (result === 'granted') {
       localStorage.setItem(ENABLED_KEY, 'true')
       setEnabled(true)
       registerPeriodicSync()
-      // Show today's reminder immediately if not yet shown
-      const lastNotified = localStorage.getItem(NOTIFIED_KEY)
-      if (lastNotified !== todayStr()) {
+      if (localStorage.getItem(NOTIFIED_KEY) !== todayStr()) {
         const { title, body } = buildMessage()
         new Notification(title, { body, icon: '/icon-192.svg', badge: '/icon-192.svg' })
         localStorage.setItem(NOTIFIED_KEY, todayStr())
       }
+      return 'granted'
     }
-    return result
+    return 'denied'
   }
 
   const disable = () => {
@@ -85,5 +101,5 @@ export function useNotifications() {
     setEnabled(false)
   }
 
-  return { permission, enabled, supported, enable, disable }
+  return { status, enabled, enable, disable }
 }
