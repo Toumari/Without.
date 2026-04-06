@@ -11,7 +11,7 @@ import type { Habit } from './types'
 
 export default function App() {
   const { habits, addHabit, editHabit, resetHabit, deleteHabit } = useHabits()
-  const { status, enabled, enable, disable } = useNotifications()
+  const { status, enabled, enable, disable, debug } = useNotifications()
   const [bellMessage, setBellMessage] = useState<string | null>(null)
   const [showAdd, setShowAdd] = useState(false)
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined)
@@ -56,6 +56,9 @@ export default function App() {
             gentle tracking for gentle minds
           </p>
         </div>
+        <p style={{ fontSize: 9, color: 'red', maxWidth: 160, textAlign: 'right', lineHeight: 1.4 }}>
+          {JSON.stringify(debug)}
+        </p>
         {status !== 'unsupported' && (
           <div className="flex flex-col items-end gap-1">
             <button

@@ -103,5 +103,13 @@ export function useNotifications() {
     setEnabled(false)
   }
 
-  return { status, enabled, enable, disable }
+  const debug = {
+    isIOS,
+    isStandalone,
+    notificationSupported,
+    needsInstall,
+    permission,
+  }
+
+  return { status, enabled, enable, disable, debug }
 }
