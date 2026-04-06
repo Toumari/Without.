@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useHabits } from './hooks/useHabits'
+import { useNotifications } from './hooks/useNotifications'
 import { HabitCard } from './components/HabitCard'
 import { AddHabitModal } from './components/AddHabitModal'
 import { SlipModal } from './components/SlipModal'
@@ -10,6 +11,7 @@ import type { Habit } from './types'
 
 export default function App() {
   const { habits, addHabit, editHabit, resetHabit, deleteHabit } = useHabits()
+  const { permission, enabled, supported, enable, disable } = useNotifications()
   const [showAdd, setShowAdd] = useState(false)
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined)
   const [slippingId, setSlippingId] = useState<string | null>(null)
@@ -38,19 +40,31 @@ export default function App() {
       style={{ background: 'var(--color-cream)' }}
     >
       {/* Header */}
-      <header className="px-6 pt-12 pb-6 flex flex-col gap-1">
-        <h1
-          className="text-4xl"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-warm-dark)' }}
-        >
-          without.
-        </h1>
-        <p
-          className="text-sm font-medium"
-          style={{ color: 'var(--color-warm-mid)' }}
-        >
-          gentle tracking for gentle minds
-        </p>
+      <header className="px-6 pt-12 pb-6 flex items-start justify-between">
+        <div className="flex flex-col gap-1">
+          <h1
+            className="text-4xl"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-warm-dark)' }}
+          >
+            without.
+          </h1>
+          <p
+            className="text-sm font-medium"
+            style={{ color: 'var(--color-warm-mid)' }}
+          >
+            gentle tracking for gentle minds
+          </p>
+        </div>
+        {supported && permission !== 'denied' && (
+          <button
+            onClick={enabled ? disable : enable}
+            className="mt-1 w-10 h-10 flex items-center justify-center rounded-full transition-opacity hover:opacity-60"
+            title={enabled ? 'Disable daily reminder' : 'Enable daily reminder'}
+            style={{ color: enabled ? 'var(--color-sage)' : 'var(--color-warm-gray)' }}
+          >
+            {enabled ? '🔔' : '🔕'}
+          </button>
+        )}
       </header>
 
       {/* Main content */}
