@@ -9,6 +9,7 @@ import { HabitCard } from './components/HabitCard'
 import { AddHabitModal } from './components/AddHabitModal'
 import { SlipModal } from './components/SlipModal'
 import { DeleteModal } from './components/DeleteModal'
+import { HistoryModal } from './components/HistoryModal'
 import { EmptyState } from './components/EmptyState'
 import { FAB } from './components/FAB'
 import type { Habit } from './types'
@@ -21,6 +22,7 @@ export default function App() {
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined)
   const [slippingId, setSlippingId] = useState<string | null>(null)
   const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null)
+  const [historyHabit, setHistoryHabit] = useState<Habit | null>(null)
   const [bellMessage, setBellMessage] = useState<string | null>(null)
 
   const sensors = useSensors(
@@ -131,6 +133,7 @@ export default function App() {
                   onSlip={handleSlip}
                   onEdit={handleEdit}
                   onDelete={(id) => setDeletingHabit(habits.find(h => h.id === id) ?? null)}
+                  onHistory={setHistoryHabit}
                 />
               ))}
             </SortableContext>
@@ -156,6 +159,12 @@ export default function App() {
           if (deletingHabit) deleteHabit(deletingHabit.id)
           setDeletingHabit(null)
         }}
+      />
+
+      <HistoryModal
+        open={historyHabit !== null}
+        habit={historyHabit}
+        onClose={() => setHistoryHabit(null)}
       />
 
       <SlipModal

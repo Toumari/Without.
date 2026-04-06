@@ -13,6 +13,7 @@ interface Props {
   onSlip: (id: string) => void
   onEdit: (habit: Habit) => void
   onDelete: (id: string) => void
+  onHistory: (habit: Habit) => void
 }
 
 function useCountUp(target: number, duration = 1200) {
@@ -36,7 +37,7 @@ function useCountUp(target: number, duration = 1200) {
   return count
 }
 
-export function HabitCard({ habit, index, onSlip, onEdit, onDelete }: Props) {
+export function HabitCard({ habit, index, onSlip, onEdit, onDelete, onHistory }: Props) {
   const days = calcDays(habit.startDate)
   const milestone = getMilestone(days)
   const displayCount = useCountUp(days)
@@ -84,36 +85,37 @@ export function HabitCard({ habit, index, onSlip, onEdit, onDelete }: Props) {
               <GripVertical size={16} />
             </div>
 
-            {/* Emoji */}
-            <span className="text-2xl leading-none flex-shrink-0">{habit.emoji}</span>
-
-            {/* Name + milestone */}
-            <div className="flex-1 flex flex-col gap-0.5 min-w-0">
-              <span
-                className="text-base font-semibold leading-tight truncate"
-                style={{ color: 'var(--color-warm-dark)' }}
-              >
-                {habit.name}
-              </span>
-              {milestone && <MilestoneBadge label={milestone.label} />}
-            </div>
-
-            {/* Day count */}
-            <div className="flex flex-col items-center flex-shrink-0">
-              <span
-                className="leading-none tabular-nums"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '2rem',
-                  color: 'var(--color-warm-dark)',
-                }}
-              >
-                {displayCount}
-              </span>
-              <span className="text-xs font-medium" style={{ color: 'var(--color-warm-mid)' }}>
-                {days === 1 ? 'day' : 'days'}
-              </span>
-            </div>
+            {/* Tappable area: emoji + name + count */}
+            <button
+              className="flex-1 flex items-center gap-2 min-w-0 text-left"
+              onClick={() => onHistory(habit)}
+            >
+              <span className="text-2xl leading-none flex-shrink-0">{habit.emoji}</span>
+              <div className="flex-1 flex flex-col gap-0.5 min-w-0">
+                <span
+                  className="text-base font-semibold leading-tight truncate"
+                  style={{ color: 'var(--color-warm-dark)' }}
+                >
+                  {habit.name}
+                </span>
+                {milestone && <MilestoneBadge label={milestone.label} />}
+              </div>
+              <div className="flex flex-col items-center flex-shrink-0">
+                <span
+                  className="leading-none tabular-nums"
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '2rem',
+                    color: 'var(--color-warm-dark)',
+                  }}
+                >
+                  {displayCount}
+                </span>
+                <span className="text-xs font-medium" style={{ color: 'var(--color-warm-mid)' }}>
+                  {days === 1 ? 'day' : 'days'}
+                </span>
+              </div>
+            </button>
 
             {/* Menu */}
             <div className="relative flex-shrink-0">

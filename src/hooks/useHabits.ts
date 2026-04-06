@@ -24,6 +24,8 @@ export function useHabits() {
         name,
         emoji,
         startDate,
+        createdDate: startDate,
+        slips: [],
       }
       persist([...habits, newHabit])
     },
@@ -32,8 +34,13 @@ export function useHabits() {
 
   const resetHabit = useCallback(
     (id: string) => {
+      const today = todayISO()
       persist(
-        habits.map((h) => (h.id === id ? { ...h, startDate: todayISO() } : h)),
+        habits.map((h) =>
+          h.id === id
+            ? { ...h, startDate: today, slips: [...h.slips, today] }
+            : h
+        ),
       )
     },
     [habits, persist],
