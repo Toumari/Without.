@@ -48,7 +48,9 @@ function maybeNotifyOnOpen() {
 }
 
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+const isStandalone =
+  (navigator as any).standalone === true ||
+  window.matchMedia('(display-mode: standalone)').matches
 const notificationSupported = typeof Notification !== 'undefined'
 
 export type NotificationStatus = 'unsupported' | 'needs-install' | 'default' | 'granted' | 'denied'
