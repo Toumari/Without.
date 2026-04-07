@@ -2,12 +2,15 @@ import { differenceInCalendarDays, parseISO, startOfDay, subDays, format } from 
 import type { Habit, Milestone } from '../types'
 
 export const MILESTONES: Milestone[] = [
-  { days: 1,  label: 'first day ✦' },
-  { days: 7,  label: 'one week ✦' },
-  { days: 14, label: 'two weeks ✦' },
-  { days: 30, label: 'one month ✦' },
-  { days: 60, label: 'two months ✦' },
-  { days: 90, label: 'three months ✦' },
+  { days: 1,   label: 'first day ✦' },
+  { days: 7,   label: 'one week ✦' },
+  { days: 14,  label: 'two weeks ✦' },
+  { days: 30,  label: 'one month ✦' },
+  { days: 60,  label: 'two months ✦' },
+  { days: 90,  label: 'three months ✦' },
+  { days: 100, label: '100 days ✦' },
+  { days: 180, label: 'six months ✦' },
+  { days: 365, label: 'one year ✦' },
 ]
 
 export function calcDays(startDate: string): number {
@@ -50,6 +53,11 @@ export function getCalendarDays(habit: Habit, numDays = 91): CalendarDay[] {
     else status = 'clean'
     return { date, status }
   })
+}
+
+export function getBestStreak(habit: Habit): number {
+  const streaks = getStreaks(habit)
+  return Math.max(...streaks.map(s => s.days))
 }
 
 export function getStreaks(habit: Habit): StreakRecord[] {

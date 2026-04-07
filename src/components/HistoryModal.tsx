@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { format, parseISO } from 'date-fns'
-import { getCalendarDays, getStreaks } from '../utils/milestones'
+import { getCalendarDays, getStreaks, getBestStreak } from '../utils/milestones'
 import type { Habit } from '../types'
 
 interface Props {
@@ -158,6 +158,14 @@ export function HistoryModal({ open, habit, onClose }: Props) {
                   <p className="text-xs" style={{ color: 'var(--color-warm-mid)' }}>
                     tracking since {format(parseISO(habit.createdDate), 'MMM d, yyyy')}
                   </p>
+                  {habit.slips.length > 0 && (() => {
+                    const best = getBestStreak(habit)
+                    return best > 0 ? (
+                      <p className="text-xs" style={{ color: 'var(--color-sage)' }}>
+                        best streak: {best} {best === 1 ? 'day' : 'days'}
+                      </p>
+                    ) : null
+                  })()}
                 </div>
                 <button
                   onClick={onClose}

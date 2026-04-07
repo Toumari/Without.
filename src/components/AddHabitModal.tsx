@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { todayISO } from '../utils/milestones'
+import { useTheme } from '../hooks/useTheme'
 import type { Habit } from '../types'
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function AddHabitModal({ open, onClose, onAdd, onEdit, habit }: Props) {
+  const { isDark } = useTheme()
   const editing = !!habit
   const [name, setName] = useState('')
   const [emoji, setEmoji] = useState('')
@@ -139,7 +141,7 @@ export function AddHabitModal({ open, onClose, onAdd, onEdit, habit }: Props) {
                   style={{
                     background: 'var(--color-cream)',
                     color: 'var(--color-warm-dark)',
-                    colorScheme: 'light',
+                    colorScheme: isDark ? 'dark' : 'light',
                     fontSize: '16px',
                   }}
                 />

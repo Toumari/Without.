@@ -5,7 +5,8 @@
       "WebFetch(domain:uxdesign.cc)",
       "WebFetch(domain:medium.com)",
       "WebFetch(domain:wayoflifeapp.com)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

@@ -40,6 +40,7 @@ function useCountUp(target: number, duration = 1200) {
 export function HabitCard({ habit, index, onSlip, onEdit, onDelete, onHistory }: Props) {
   const days = calcDays(habit.startDate)
   const milestone = getMilestone(days)
+  const showMilestone = milestone && !(milestone.days === 1 && habit.slips.length > 0)
   const displayCount = useCountUp(days)
   const cardRef = useRef<HTMLDivElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -63,15 +64,15 @@ export function HabitCard({ habit, index, onSlip, onEdit, onDelete, onHistory }:
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: isDragging ? 0.4 : 1, y: 0 }}
-        transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: isDragging ? 0 : 0.45, delay: isDragging ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       >
         <div
           ref={cardRef}
-          className={`rounded-3xl flex flex-col ${milestone ? 'milestone-glow' : ''}`}
+          className={`rounded-3xl flex flex-col ${showMilestone ? 'milestone-glow' : ''}`}
           style={{
             background: 'var(--color-card)',
             boxShadow: isDragging ? '0 16px 40px rgba(0,0,0,0.16)' : '0 4px 16px rgba(0,0,0,0.06)',
-            border: milestone ? undefined : '1px solid rgba(0,0,0,0.04)',
+            border: isDragging ? '2px solid var(--color-sage)' : showMilestone ? undefined : '1px solid rgba(0,0,0,0.04)',
           }}
         >
           {/* Main row */}
@@ -98,7 +99,7 @@ export function HabitCard({ habit, index, onSlip, onEdit, onDelete, onHistory }:
                 >
                   {habit.name}
                 </span>
-                {milestone && <MilestoneBadge label={milestone.label} />}
+                {showMilestone && <MilestoneBadge label={milestone!.label} />}
               </div>
               <div className="flex flex-col items-center flex-shrink-0">
                 <span
