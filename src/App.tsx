@@ -48,7 +48,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col" style={{ background: 'var(--color-cream)' }}>
+    <div className="min-h-dvh flex flex-col mx-auto w-full" style={{ background: 'var(--color-cream)', maxWidth: '480px' }}>
       {/* Header */}
       <header className="px-6 pt-12 pb-6 flex items-start justify-between">
         <div className="flex flex-col gap-1">
