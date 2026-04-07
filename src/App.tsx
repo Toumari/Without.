@@ -5,6 +5,7 @@ import { Moon, Sun } from 'lucide-react'
 import { useHabits } from './hooks/useHabits'
 import { useNotifications } from './hooks/useNotifications'
 import { useTheme } from './hooks/useTheme'
+import { useDailyRefresh } from './hooks/useDailyRefresh'
 import { HabitCard } from './components/HabitCard'
 import { AddHabitModal } from './components/AddHabitModal'
 import { SlipModal } from './components/SlipModal'
@@ -18,6 +19,7 @@ export default function App() {
   const { habits, addHabit, editHabit, resetHabit, deleteHabit, reorderHabits } = useHabits()
   const { status, enabled, enable, disable } = useNotifications()
   const { isDark, toggle: toggleTheme } = useTheme()
+  useDailyRefresh()
   const [showAdd, setShowAdd] = useState(false)
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined)
   const [slippingId, setSlippingId] = useState<string | null>(null)
