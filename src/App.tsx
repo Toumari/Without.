@@ -13,7 +13,10 @@ import { DeleteModal } from './components/DeleteModal'
 import { HistoryModal } from './components/HistoryModal'
 import { EmptyState } from './components/EmptyState'
 import { FAB } from './components/FAB'
+import { OnboardingScreen } from './components/OnboardingScreen'
 import type { Habit } from './types'
+
+const ONBOARDED_KEY = 'without_onboarded'
 
 export default function App() {
   const { habits, addHabit, editHabit, resetHabit, deleteHabit, reorderHabits } = useHabits()
@@ -26,6 +29,7 @@ export default function App() {
   const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null)
   const [historyHabit, setHistoryHabit] = useState<Habit | null>(null)
   const [bellMessage, setBellMessage] = useState<string | null>(null)
+  const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem(ONBOARDED_KEY))
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -51,6 +55,13 @@ export default function App() {
 
   return (
     <div className="min-h-dvh flex flex-col mx-auto w-full" style={{ background: 'var(--color-cream)', maxWidth: '480px' }}>
+      {!onboarded && (
+        <OnboardingScreen onDone={() => {
+          localStorage.setItem(ONBOARDED_KEY, '1')
+          setOnboarded(true)
+          setShowAdd(true)
+        }} />
+      )}
       {/* Header */}
       <header className="px-6 pt-12 pb-6 flex items-start justify-between">
         <div className="flex flex-col gap-1">

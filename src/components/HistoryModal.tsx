@@ -1,7 +1,38 @@
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { format, parseISO } from 'date-fns'
-import { getCalendarDays, getStreaks, getBestStreak } from '../utils/milestones'
+import { getCalendarDays, getStreaks, getBestStreak, getMilestone, calcDays } from '../utils/milestones'
 import type { Habit } from '../types'
+
+function buildShareText(habit: Habit): string {
+  const days = calcDays(habit.startDate)
+  const milestone = getMilestone(days)
+  const lines = [
+    `${habit.emoji} ${days} ${days === 1 ? 'day' : 'days'} without ${habit.name}.`,
+    milestone ? `That's ${milestone.label.replace(' ✦', '')}.` : '',
+    '',
+    'without. — gentle tracking for gentle minds',
+  ]
+  return lines.filter(Boolean).join('\n')
+}
+
+async function shareHabit(habit: Habit): Promise<'shared' | 'copied' | 'failed'> {
+  const text = buildShareText(habit)
+  if (navigator.share) {
+    try {
+      await navigator.share({ text })
+      return 'shared'
+    } catch {
+      // user cancelled or error — fall through to clipboard
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(text)
+    return 'copied'
+  } catch {
+    return 'failed'
+  }
+}
 
 interface Props {
   open: boolean
@@ -119,6 +150,18 @@ function StreakList({ habit }: { habit: Habit }) {
 }
 
 export function HistoryModal({ open, habit, onClose }: Props) {
+  const [shareLabel, setShareLabel] = useState('Share milestone')
+
+  const handleShare = async (h: Habit) => {
+    const days = calcDays(h.startDate)
+    if (!getMilestone(days)) return
+    const result = await shareHabit(h)
+    if (result === 'copied') {
+      setShareLabel('Copied!')
+      setTimeout(() => setShareLabel('Share milestone'), 2500)
+    }
+  }
+
   return (
     <AnimatePresence>
       {open && habit && (
@@ -178,6 +221,18 @@ export function HistoryModal({ open, habit, onClose }: Props) {
 
               <Calendar habit={habit} />
               <StreakList habit={habit} />
+              {getMilestone(calcDays(habit.startDate)) && (
+                <button
+                  onClick={() => handleShare(habit)}
+                  className="w-full py-3.5 rounded-2xl text-sm font-semibold text-white transition-all duration-150 hover:opacity-90 active:scale-95"
+                  style={{
+                    background: 'var(--color-sage)',
+                    boxShadow: '0 4px 16px rgba(139,175,150,0.35)',
+                  }}
+                >
+                  {shareLabel}
+                </button>
+              )}
             </motion.div>
           </div>
         </>
